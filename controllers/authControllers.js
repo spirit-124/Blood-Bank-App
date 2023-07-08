@@ -47,38 +47,33 @@ const loginUser = async (req, res) => {
     if (!user) {
       return res.status(404).send({
         success: false,
-        message: "User not found",
+        message: "Invalid Credentials",
       });
     }
-
-    // check role
+    //check role
     if (user.role !== req.body.role) {
-      res.status(500).send({
+      return res.status(500).send({
         success: false,
-        message: "Role not found",
+        message: "role dosent match",
       });
     }
-    // password comparing
-
-    const comparingPassword = await bcrypt.compare(
+    //compare password
+    const comparePassword = await bcrypt.compare(
       req.body.password,
       user.password
     );
-    if (!comparingPassword) {
-      res.status(500).send({
+    if (!comparePassword) {
+      return res.status(500).send({
         success: false,
-        message: "Invalid password",
+        message: "Invalid Credentials",
       });
     }
-
-    // Generating Token
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
       expiresIn: "1d",
     });
-
-    return res.status(200).json({
+    return res.status(200).send({
       success: true,
-      message: "LOGIN Successfully",
+      message: "Login Successfully",
       token,
       user,
     });
@@ -86,7 +81,7 @@ const loginUser = async (req, res) => {
     console.log(error);
     res.status(500).send({
       success: false,
-      message: "Error In Register API",
+      message: "Error In Login API",
       error,
     });
   }

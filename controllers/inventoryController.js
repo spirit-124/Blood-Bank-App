@@ -8,29 +8,53 @@ const createInventory = async (req, res) => {
 
     const user = await userModel.findOne({ email });
     if (!user) {
-      throw new Error("User not found");
+      throw new Error("User Not Found");
     }
-    if (inventoryType === "in" && user.role !== "Donor") {
-      throw new Error("Not a Donor account");
+    if (inventoryType === "in" && user.role !== "donor") {
+      throw new Error("Not a donar account");
     }
     if (inventoryType === "out" && user.role !== "hospital") {
-      throw new Error("Not a hospital account");
+      throw new Error("Not a hospital");
     }
     // SAVE INVENTORY
     const inventory = new inventoryModel(req.body);
     await inventory.save();
-    response.status(200).json({
+    return res.status(201).send({
       success: true,
-      message: "Blood Record saved successfully",
+      message: "New Blood Reocrd Added",
     });
   } catch (error) {
     console.log(error);
     return res.status(500).send({
       success: false,
-      message: "Error creating inventory",
+      message: "Errro In Create Inventory API",
       error,
     });
   }
 };
 
-module.exports = { createInventory };
+const getInventoryController = async (req, res) => {
+  try {
+    const inventory = await inventoryModel
+      .find({
+        organisation: req.body.userId,
+      })
+      .populate("donor")
+      .populate("hospital")
+      .sort({ createdAt: -1 });
+    return res.status(200).send({
+      success: true,
+      message: "get all records successfully",
+      inventory,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({
+      success: false,
+      message: "Errro In Get All Inventory ",
+      error,
+    });
+  }
+};
+
+module.exports = { createInventory, getInventoryController };
