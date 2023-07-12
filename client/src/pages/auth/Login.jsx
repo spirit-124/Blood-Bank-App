@@ -1,24 +1,34 @@
 import React from "react";
 import Form from "../../components/shared/Form/Form";
+import { useSelector } from "react-redux";
+import Spinner from "../../components/shared/spinner";
+import { toast } from "react-toastify";
 
 const Login = () => {
+  const { loading, error } = useSelector((state) => state.auth);
+
   return (
     <>
-      <div className="row g-0">
-        <div className="col-md-8 form-image">
-          <img src="./assets/login-img.svg" alt="" />
-        </div>
-        <div
-          className="col-md-4 form-container
+      {error && <span>{toast.error(error)}</span>}
+      {loading ? (
+        <Spinner />
+      ) : (
+        <div className="row g-0">
+          <div className="col-md-8 form-image">
+            <img src="./assets/login-img.svg" alt="" />
+          </div>
+          <div
+            className="col-md-4 form-container
         "
-        >
-          <Form
-            formTittle={"Login Page"}
-            submitButton={"Login"}
-            formType={"login"}
-          />
+          >
+            <Form
+              formTittle={"Login Page"}
+              submitButton={"Login"}
+              formType={"login"}
+            />
+          </div>
         </div>
-      </div>
+      )}
     </>
   );
 };

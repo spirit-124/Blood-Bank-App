@@ -20,3 +20,42 @@
   align-items: center;
   min-height: 100vh;
 }
+
+/* ===================LOADER =================================================================
+ */
+
+ .loader-container {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.3);
+ }
+
+ .loader{
+  height: 48px;
+  width: 48px;
+  border: 5px solid #ffffff;
+  border-radius: 50%;
+  border-bottom-color: aqua;
+  display: inline-block;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+
+ }
+
+ @keyframes rotation {
+  0%{
+    transform: rotate(0deg);
+  }
+  100%{
+    transform: rotate(360deg);
+  }
+ }
+
+ /* NAVBAR ================= */
+
+ .navbar{
+  background-color: rgba(0, 0, 0, 0.6) !important;
+  color: rgba(0, 0, 0, 0.9) !important;
+ }

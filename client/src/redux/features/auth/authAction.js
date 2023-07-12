@@ -10,8 +10,10 @@ export const userLogin = createAsyncThunk(
       const { data } = await API.post("/auth/login", { role, email, password });
       //   STORE TOKEN
       if (data.success) {
+        alert(data.message);
         localStorage.setItem("token", data.token);
         toast.success(data.message);
+        window.location.replace("/");
       }
       return data;
     } catch (error) {
@@ -24,6 +26,7 @@ export const userLogin = createAsyncThunk(
   }
 );
 
+// ================================REGISTER USER================================
 export const userRegister = createAsyncThunk(
   "auth/register",
   async (
@@ -55,6 +58,27 @@ export const userRegister = createAsyncThunk(
       if (data.success) {
         toast.success(data.message);
         window.location.replace("/login");
+      }
+    } catch (error) {
+      console.log(error);
+      if (error.response && error.response.data.message) {
+        return rejectWithValue(error.response.data.message);
+      } else {
+        return rejectWithValue(error.message);
+      }
+    }
+  }
+);
+
+// ================================================CURRENT USER================================================
+
+export const getCurrentUser = createAsyncThunk(
+  "auth/getCurrentUser",
+  async ({ rejectWithValue }) => {
+    try {
+      const res = await API.get("/auth/current-user");
+      if (res?.data) {
+        return res?.data;
       }
     } catch (error) {
       console.log(error);

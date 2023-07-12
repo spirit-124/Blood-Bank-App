@@ -93,7 +93,7 @@ const loginUser = async (req, res) => {
 
 const getProfile = async (req, res) => {
   try {
-    const user = await userModel.findOne({ _id: request.body.userId });
+    const user = await userModel.findOne({ _id: req.body.userId });
     return res.status(200).send({
       success: true,
       message: "User fetched successfully",

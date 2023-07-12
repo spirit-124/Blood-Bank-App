@@ -18,5 +18,5 @@ router.post("/register", registerController);
 router.post("/login", loginUser);
 
 // GET CURRENT USER || GETUSER
-router.get("/profile", authMiddleware, getProfile);
+router.get("/current-user", authMiddleware, getProfile);
 module.exports = router;
