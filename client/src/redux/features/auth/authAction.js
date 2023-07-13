@@ -10,7 +10,7 @@ export const userLogin = createAsyncThunk(
       const { data } = await API.post("/auth/login", { role, email, password });
       //   STORE TOKEN
       if (data.success) {
-        alert(data.message);
+        // alert(data.message);
         localStorage.setItem("token", data.token);
         toast.success(data.message);
         window.location.replace("/");
