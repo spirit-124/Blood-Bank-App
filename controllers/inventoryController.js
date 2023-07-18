@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const inventoryModel = require("../models/inventoryModel");
 const userModel = require("../models/userModel");
 
@@ -13,9 +14,65 @@ const createInventory = async (req, res) => {
     // if (inventoryType === "in" && user.role !== "donor") {
     //   throw new Error("Not a donar account");
     // }
-    if (inventoryType === "out" && user.role !== "hospital") {
-      throw new Error("Not a hospital");
+    // if (inventoryType === "out" && user.role !== "hospital") {
+    //   throw new Error("Not a hospital");
+    // }
+
+    if (req.body.inventoryType === "out") {
+      const requestedBloodGroup = req.body.bloodGroup;
+      const requestedQuantity = req.body.quantity;
+      const organisation = new mongoose.Types.ObjectId(req.body.userId);
+
+      // Agrregation functions
+      const totalInofRequestedBlood = await inventoryModel.aggregate([
+        {
+          $match: {
+            organisation,
+            inventoryType: "in",
+            bloodGroup: requestedBloodGroup,
+          },
+        },
+        {
+          $group: {
+            _id: "$bloodgGroup",
+            total: { $sum: "$quantity " },
+          },
+        },
+      ]);
+
+      const totalIn = totalInofRequestedBlood;
+      [0]?.total || 0;
+      const totalOutOfRequestedBloodGroup = await inventoryModel.aggregate([
+        {
+          $match: {
+            organisation,
+            inventoryType: "out",
+            bloodGroup: requestedBloodGroup,
+          },
+        },
+        {
+          $group: {
+            _id: "$bloodGroup",
+            total: { $sum: "$quantity" },
+          },
+        },
+      ]);
+      const totalOut = totalOutOfRequestedBloodGroup[0]?.total || 0;
+
+      //in & Out Calc
+      const availableQuanityOfBloodGroup = totalIn - totalOut;
+      //quantity validation
+      if (availableQuanityOfBloodGroup < requestedQuantity) {
+        return res.status(500).send({
+          success: false,
+          message: `Only ${availableQuanityOfBloodGroup}ML of ${requestedBloodGroup.toUpperCase()} is available`,
+        });
+      }
+      req.body.hospital = user?._id;
+    } else {
+      req.body.donar = user?._id;
     }
+
     // SAVE INVENTORY
     const inventory = new inventoryModel(req.body);
     await inventory.save();
