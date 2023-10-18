@@ -3,7 +3,7 @@ const dotenv = require("dotenv");
 const morgan = require("morgan");
 const cors = require("cors");
 const connectDb = require("./config/db");
-const bodyParser = require("body-parser");
+// const bodyParser = require("body-parser");
 const authRoutes = require("./routes/authRoutes.js");
 const { notFound, errHandler } = require("./middlewares/errorMiddleware");
 
@@ -23,8 +23,8 @@ app.use(cors());
 app.use(morgan("dev"));
 
 // /Routes
-app.use("/app/v1/auth", require("./routes/authRoutes.js"));
-app.use("/app/v1/inventory", require("./routes/inventoryRoutes.js"));
+app.use("/app/v1/auth", authRoutes);
+app.use("/app/v1/inventory", require("./routes/inventoryRoutes"));
 app.use(notFound);
 app.use(errHandler);
 
